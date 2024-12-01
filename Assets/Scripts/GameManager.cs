@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic; // Thêm để sử dụng Queue<T>
 
 public class GameManager : MonoBehaviour
 {
@@ -16,9 +17,12 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null) {
+        if (Instance != null)
+        {
             DestroyImmediate(gameObject);
-        } else {
+        }
+        else
+        {
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
@@ -40,19 +44,24 @@ public class GameManager : MonoBehaviour
 
         score = 0;
         scoreText.text = score.ToString();
+        FruitQueue.Clear();
     }
 
     private void ClearScene()
     {
+        // Xóa tất cả các trái cây hiện tại trong scene
         Fruit[] fruits = FindObjectsOfType<Fruit>();
 
-        foreach (Fruit fruit in fruits) {
+        foreach (Fruit fruit in fruits)
+        {
             Destroy(fruit.gameObject);
         }
 
+        // Xóa tất cả các quả bom trong scene
         Bomb[] bombs = FindObjectsOfType<Bomb>();
 
-        foreach (Bomb bomb in bombs) {
+        foreach (Bomb bomb in bombs)
+        {
             Destroy(bomb.gameObject);
         }
     }
@@ -114,4 +123,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Getter để Spawner có thể truy cập Queue của GameManager
+    public Queue<GameObject> FruitQueue => spawner.FruitQueue;
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using System.Collections.Generic; // Thêm vào đây để sử dụng Queue<T>
 
 [RequireComponent(typeof(Collider))]
 public class Spawner : MonoBehaviour
@@ -10,8 +11,8 @@ public class Spawner : MonoBehaviour
     public GameObject bombPrefab;
     [Range(0f, 1f)] public float bombChance = 0.05f;
 
-    public float minSpawnDelay = 0.25f;
-    public float maxSpawnDelay = 1f;
+    public float minSpawnDelay = 0.8f;
+    public float maxSpawnDelay = 1.3f;
 
     public float minAngle = -15f;
     public float maxAngle = 15f;
@@ -21,9 +22,13 @@ public class Spawner : MonoBehaviour
 
     public float maxLifetime = 5f;
 
+    // Thêm một Queue<GameObject> để quản lý thứ tự xuất hiện của trái cây
+    public Queue<GameObject> FruitQueue { get; private set; }
+
     private void Awake()
     {
         spawnArea = GetComponent<Collider>();
+        FruitQueue = new Queue<GameObject>(); // Khởi tạo Queue
     }
 
     private void OnEnable()
@@ -39,6 +44,8 @@ public class Spawner : MonoBehaviour
     private IEnumerator Spawn()
     {
         yield return new WaitForSeconds(2f);
+        minSpawnDelay = 0.8f;
+        maxSpawnDelay = 1.3f;
 
         while (enabled)
         {
@@ -58,11 +65,15 @@ public class Spawner : MonoBehaviour
             Quaternion rotation = Quaternion.Euler(0f, 0f, Random.Range(minAngle, maxAngle));
 
             GameObject fruit = Instantiate(prefab, position, rotation);
+
+            // Thêm vào Queue để quản lý thứ tự
+            FruitQueue.Enqueue(fruit);
+
             Destroy(fruit, maxLifetime);
 
             float force = Random.Range(minForce, maxForce);
             fruit.GetComponent<Rigidbody>().AddForce(fruit.transform.up * force, ForceMode.Impulse);
-
+            print(maxSpawnDelay);
             yield return new WaitForSeconds(Random.Range(minSpawnDelay, maxSpawnDelay));
         }
     }
