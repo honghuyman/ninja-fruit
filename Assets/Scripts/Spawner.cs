@@ -9,9 +9,9 @@ public class Spawner : MonoBehaviour
 
     public GameObject[] fruitPrefabs;
     public GameObject bombPrefab;
-    [Range(0f, 1f)] public float bombChance = 0.05f;
+    [Range(0f, 1f)] public float bombChance = 0.15f;
 
-    public float minSpawnDelay = 0.8f;
+    public float minSpawnDelay = 0.5f;
     public float maxSpawnDelay = 1.3f;
 
     public float minAngle = -15f;
@@ -68,7 +68,12 @@ public class Spawner : MonoBehaviour
 
             // Thêm vào Queue để quản lý thứ tự
             FruitQueue.Enqueue(fruit);
-
+            /////////Cap nhat neu la bom loai ra khoi hang doi/////////
+            if (prefab == bombPrefab)
+            {
+                FruitQueue.Dequeue();
+            }
+            /////////////////////////////////////////////////////////
             Destroy(fruit, maxLifetime);
 
             float force = Random.Range(minForce, maxForce);
